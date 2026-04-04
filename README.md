@@ -8,46 +8,56 @@ The game allows the player to control units, gather resources, construct buildin
 
 The implemented systems include:
 
-Unit control and selection
-Resource gathering (economy system)
-Building construction and production
-Supply management
-Minimap navigation
-Fog of War (visibility system)
-Enemy AI behavior
+* Unit control and selection
+* Resource gathering (economy system)
+* Building construction and production
+* Supply management
+* Minimap navigation
+* Fog of War
+* Enemy AI behavior
+
 ⚙️ Main Features
-Controlling multiple units 
-Resource collection using worker units
-Building system with construction phases
-Fog of War 
-Rule-based enemy AI 
-Dynamic and responsive user interface
+
+* Controlling multiple units 
+* Resource collection using worker units
+* Building system with construction phases
+* Fog of War 
+* Rule-based enemy AI 
+* Dynamic and responsive user interface
+
 🧠 AI System
 
 The enemy AI is based on a rule-driven system. It can:
 
-Manage economy 
-Produce units and construct buildings
-Scout the map
-Launch attacks in waves
-Defend its base
-Retreat 
+* Manage economy 
+* Produce units and construct buildings
+* Scout the map
+* Launch attacks in waves
+* Defend its base
+* Retreat
+  
 🗺️ Movement & Map
-Movement is handled using Unity NavMesh
-Units automatically find paths and avoid obstacles
-The map is limited using World Collider Bounds
-Minimap allows fast camera movement across the map
+
+* Movement is handled using Unity NavMesh
+* Units automatically find paths and avoid obstacles
+* The map is limited using World Collider Bounds
+* Minimap allows fast camera movement across the map
+
 🧱 Buildings & Units
-Buildings can produce units and upgrades
-Supply system limits the number of units
-Different unit roles
+
+* Buildings can produce units and upgrades
+* Supply system limits the number of units
+* Different unit roles
+
 🛠️ Technologies Used
-Unity Engine
-C#
-NavMesh 
-Custom UI system
-ScriptableObjects
+
+* Unity Engine
+* C#
+* NavMesh 
+* UI system
+
 ⚠️ Limitations
+
 AI uses simple rule-based logic (no advanced strategy or learning)
 
 📂 Project Files
