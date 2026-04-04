@@ -1,0 +1,59 @@
+using System.Linq;
+using RTS.Player;
+using RTS.TechTree;
+using RTS.Units;
+using UnityEngine;
+using UnityEngine.InputSystem.LowLevel;
+
+namespace RTS.Commands
+{
+    [CreateAssetMenu(fileName = "Build Building", menuName = "Units/Commands/Build Building")]
+    public class BuildBuildingCommand : BaseCommand, IUnlockableCommand
+    {
+        [field: SerializeField] public BuildingSO Building { get; private set; }
+
+        public override bool CanHandle(CommandContext context)
+        {
+            if (context.Commandable is not IBuildingBuilder buildingBuilder || buildingBuilder.IsBuilding) return false;
+
+            if (context.Hit.collider != null && context.Button == MouseButton.Right)
+            {
+                return context.Hit.collider.TryGetComponent(out BaseBuilding building)
+                    && Building == building.BuildingSO
+                    && (building.Progress.State == BuildingProgress.BuildingState.Paused
+                        || building.Progress.State == BuildingProgress.BuildingState.Destroyed
+                    );
+            }
+
+            return HasEnoughSupplies(context) && AllRestrictionsPass(context, context.Hit.point);
+        }
+
+        public override void Handle(CommandContext context)
+        {
+            IBuildingBuilder builder = (IBuildingBuilder)context.Commandable;
+            if (context.Hit.collider != null && context.Hit.collider.TryGetComponent(out BaseBuilding building))
+            {
+                builder.ResumeBuilding(building);
+            }
+            else if (HasEnoughSupplies(context) && AllRestrictionsPass(context, context.Hit.point))
+            {
+                builder.Build(Building, context.Hit.point);
+            }
+        }
+
+        public override bool IsLocked(CommandContext context) =>
+            !HasEnoughSupplies(context) || !Building.TechTree.IsUnlocked(context.Owner, Building);
+
+        public UnlockableSO[] GetUnmetDependencies(Owner owner)
+        {
+            return Building.TechTree.GetUnmetDependencies(owner, Building);
+        }
+
+        private bool HasEnoughSupplies(CommandContext context)
+        {
+            return Building.Cost.Minerals <= Supplies.Minerals[context.Owner]
+                && Building.Cost.Wood <= Supplies.Wood[context.Owner]
+                && Building.Cost.Stone <= Supplies.Stone[context.Owner];
+        }
+    }
+}

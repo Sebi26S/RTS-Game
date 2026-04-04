@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3673ef7265aa1204e995f12a92dc1009, type: 3}
+  m_Name: Reset Commands
+  m_EditorClassIdentifier: Assembly-CSharp::RTS.Commands.OverrideCommandsCommand
+  <Name>k__BackingField: Cancel
+  <Hotkey>k__BackingField: 0
+  <Icon>k__BackingField: {fileID: 21300000, guid: 50d20d7746d35b44f81e7851b7ac2358, type: 3}
+  <Slot>k__BackingField: 8
+  <RequiresClickToActivate>k__BackingField: 0
+  <IsSingleUnitCommand>k__BackingField: 0
+  <GhostPrefab>k__BackingField: {fileID: 0}
+  <Restrictions>k__BackingField: []
+  <Commands>k__BackingField: []

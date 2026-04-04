@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e97bb431db29e6a48a2d6df8320488c3, type: 3}
+  m_Name: Build Infantary School
+  m_EditorClassIdentifier: Assembly-CSharp::RTS.Commands.BuildBuildingCommand
+  <Name>k__BackingField: Infantary School
+  <Hotkey>k__BackingField: 23
+  <Icon>k__BackingField: {fileID: 21300000, guid: 9913c672e9ced57439a2369b346459fe, type: 3}
+  <Slot>k__BackingField: 3
+  <RequiresClickToActivate>k__BackingField: 1
+  <IsSingleUnitCommand>k__BackingField: 1
+  <GhostPrefab>k__BackingField: {fileID: 6348512026153415029, guid: 25c47fbcd2c8ce344b1fcd5c67683c35, type: 3}
+  <Restrictions>k__BackingField:
+  - {fileID: 11400000, guid: 1e3b8a7da58f1ab46870e0f25a68e617, type: 2}
+  - {fileID: 11400000, guid: 91caf1b0b1dffff43af27abe634720ff, type: 2}
+  <Building>k__BackingField: {fileID: 11400000, guid: 66629aba94d6f4a43972a932a4f8576f, type: 2}

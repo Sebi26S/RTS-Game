@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: cc403a3b954855f4bba4f2ca331d7b46
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 123574
+  packageName: 'NatureForge: Low Poly Meadow & Farm Kit (Free Edition)'
+  packageVersion: 2.4
+  assetPath: Assets/EmaceArt/NatureForge/Post Processing_profile/Settings/EA_PP_NatureForge_Profile.asset
+  uploadId: 874650

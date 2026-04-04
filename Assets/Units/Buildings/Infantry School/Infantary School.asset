@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 902a6520923f8104a8d9b5773a4f4398, type: 3}
+  m_Name: Infantary School
+  m_EditorClassIdentifier: Assembly-CSharp::RTS.Units.BuildingSO
+  <Name>k__BackingField: Infantry School
+  <IsOneTimeUnlock>k__BackingField: 0
+  <BuildTime>k__BackingField: 25
+  <Icon>k__BackingField: {fileID: 21300000, guid: 9913c672e9ced57439a2369b346459fe, type: 3}
+  <Cost>k__BackingField: {fileID: 11400000, guid: 795d9b437d5ff7c47bf5912ed4cd40ca, type: 2}
+  <TechTree>k__BackingField: {fileID: 11400000, guid: b919fd3c9f13cf3488edcdc3a808e0ba, type: 2}
+  <unlockRequirements>k__BackingField:
+  - {fileID: 11400000, guid: 030b9399e2b406c489b36eb4bed57bb8, type: 2}
+  <Health>k__BackingField: 600
+  <Prefab>k__BackingField: {fileID: 5175054564074698786, guid: c3932362a5b6dcf4ab5981f279eb5a71, type: 3}
+  <Upgrades>k__BackingField: []
+  <SightConfig>k__BackingField: {fileID: 11400000, guid: bbdc69314557e8548b55c92790327007, type: 2}
+  <PopulationConfig>k__BackingField: {fileID: 11400000, guid: a60058f35e293194086b3997155dda59, type: 2}
+  <PlacementMaterial>k__BackingField: {fileID: 2100000, guid: a3ba1d108f7286e4ab477101e9f88a9e, type: 2}

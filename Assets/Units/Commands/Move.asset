@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d8a5b791168bb54a83afe118f257b5a, type: 3}
+  m_Name: Move
+  m_EditorClassIdentifier: Assembly-CSharp::RTS.Commands.MoveCommand
+  <Name>k__BackingField: Move
+  <Hotkey>k__BackingField: 27
+  <Icon>k__BackingField: {fileID: 21300000, guid: 31a93d4b2ea8b7c4aa64e5e2eeb9937f, type: 3}
+  <Slot>k__BackingField: 0
+  <RequiresClickToActivate>k__BackingField: 1
+  <IsSingleUnitCommand>k__BackingField: 0
+  <GhostPrefab>k__BackingField: {fileID: 0}
+  <Restrictions>k__BackingField: []
+  radiusMultiplier: 3.5
