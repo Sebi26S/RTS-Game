@@ -50,6 +50,21 @@ ScriptableObjects
 ⚠️ Limitations
 AI uses simple rule-based logic (no advanced strategy or learning)
 
+📂 Project Files
+
+The following folders belong to the Unity project:
+
+* Assets
+* Packages
+* ProjectSettings
+
+
+The file final.rar contains the built version of the game.
+
+💻 Build Information
+
+The exported game is currently available only for the Windows(x64) platform.
+
 👨‍💻 Author
 
 Sebestyén Svajcer
