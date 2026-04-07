@@ -123,7 +123,6 @@ namespace RTS.Units
             if (supply.Supply == null) return;
             if (Supplies.IsAtMax(Owner, supply.Supply)) return;
 
-            // ha már pont ezt gathereli, ne indítsuk újra
             if (gatherRoutine != null && currentSupply == supply && gatherType == supply.Supply)
                 return;
 

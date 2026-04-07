@@ -319,10 +319,17 @@ namespace RTS.Units
                 {
                     AbstractUnitSO unitSO = SOBeingBuilt as AbstractUnitSO;
 
-                    while (Supplies.Population[Owner] + unitSO.PopulationConfig.PopulationCost > Supplies.PopulationLimit[Owner])
+                    int currentPopulation = Supplies.Population[Owner];
+                    int populationCost = unitSO.PopulationConfig.PopulationCost;
+                    int populationLimit = Supplies.PopulationLimit[Owner];
+
+                    while (currentPopulation + populationCost > populationLimit)
                     {
                         yield return null;
                         CurrentQueueStartTime = Time.time;
+
+                        currentPopulation = Supplies.Population[Owner];
+                        populationLimit = Supplies.PopulationLimit[Owner];
                     }
 
                     Bus<PopulationEvent>.Raise(Owner, new PopulationEvent(

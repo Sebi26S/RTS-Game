@@ -89,14 +89,12 @@ namespace RTS.TechTree
 
             foreach(Owner owner in Enum.GetValues(typeof(Owner)))
             {
-                //Debug.Log($"Adding {owner} to Tech Trees Dictionary");
                 techTrees.Add(owner, new Dictionary<UnlockableSO, Dependency>());
                 unlockedDependencies.Add(owner, new HashSet<UnlockableSO>());
 
                 foreach(UnlockableSO unlockableSO in allUnlockables)
                 {
                     techTrees[owner].Add(unlockableSO, new Dependency(unlockableSO));
-                    //Debug.Log($"Configuring {unlockableSO}'s {unlockableSO.UnlockRequirements.Count()} dependencies");
                 }
             }
         }
@@ -121,17 +119,12 @@ namespace RTS.TechTree
 
             public void UnlockDependency(UnlockableSO dependency)
             {
-                //Debug.Log($"Attempting to unlock dependency {dependency.Name}");
 
                 if (Dependencies.Contains(dependency) && !metDependencies.TryAdd(dependency, 1))
                 {
                     metDependencies[dependency]++;
                 }
-                /*
-                if (metDependencies.ContainsKey(dependency))
-                {
-                    Debug.Log($"Met dependencies for {dependency.Name}: {metDependencies[dependency]}");
-                }*/
+
             }
 
             public void LoseDependency(UnlockableSO dependency)

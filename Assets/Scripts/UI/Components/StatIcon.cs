@@ -30,10 +30,8 @@ namespace RTS.UI.Components
 
             int amount = unitSO.AttackConfig.Damage;
 
-            // ✅ Szép kiírás
             amountLabel.SetText($"{statName}: {amount}");
 
-            // Tooltip is lehet részletesebb
             tooltip.SetText($"{statName}: {amount}");
 
             icon.sprite = unitSO.AttackConfig.Icon;
@@ -43,7 +41,6 @@ namespace RTS.UI.Components
                 && upgradeSO.PropertyPath.Contains("AttackConfig/Damage")
             );
 
-            // ✅ Szép kiírás
             upgradeLabel.SetText($"{upgradedPrefix}: {upgradeCount}");
         }
 
