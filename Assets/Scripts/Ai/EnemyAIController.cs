@@ -478,7 +478,11 @@ namespace RTS.AI
                     continue;
 
                 toRelease.Add(worker);
-                worker.Stop();
+
+                if (worker.Owner == aiOwner && worker.CurrentHealth > 0 && worker.Transform != null)
+                {
+                    worker.Stop();
+                }
             }
 
             foreach (Worker worker in toRelease)
@@ -489,7 +493,9 @@ namespace RTS.AI
 
         private void AssignIdleWorkersIntelligently()
         {
-            while (true)
+            const int maxIterations = 16;
+
+            for (int iteration = 0; iteration < maxIterations; iteration++)
             {
                 int woodMissing = GetMissingWorkersFor(SupplyType.Wood);
                 int stoneMissing = GetMissingWorkersFor(SupplyType.Stone);
@@ -514,14 +520,18 @@ namespace RTS.AI
                     secondaryType = SupplyType.Wood;
                 }
 
-                if (TryAssignWorkerToSupplyType(primaryType))
+                bool assignedPrimary = TryAssignWorkerToSupplyType(primaryType);
+                if (assignedPrimary)
                     continue;
 
-                if (TryAssignWorkerToSupplyType(secondaryType))
+                bool assignedSecondary = TryAssignWorkerToSupplyType(secondaryType);
+                if (assignedSecondary)
                     continue;
 
                 return;
             }
+
+            Debug.LogWarning("AssignIdleWorkersIntelligently hit maxIterations.", this);
         }
 
         private bool TryAssignWorkerToSupplyType(SupplyType targetType)
@@ -545,7 +555,20 @@ namespace RTS.AI
             if (worker == null)
                 return false;
 
+            if (worker.Transform == null || worker.CurrentHealth <= 0 || worker.Owner != aiOwner)
+                return false;
+
             worker.Gather(nearestNode);
+
+            if (worker == null || worker.Transform == null || worker.CurrentHealth <= 0)
+                return false;
+
+            if (!worker.IsGathering)
+                return false;
+
+            if (worker.CurrentGatherType == null || worker.CurrentGatherType.Type != targetType)
+                return false;
+
             workerAssignments[worker] = targetType;
             return true;
         }
