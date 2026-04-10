@@ -146,7 +146,9 @@ namespace RTS.Units
             while (true)
             {
                 if (!IsAliveAndActive())
+                {
                     yield break;
+                }
 
                 if (gatherType == null || Supplies.IsAtMax(Owner, gatherType))
                     break;
@@ -167,7 +169,9 @@ namespace RTS.Units
                 while (currentSupply != null)
                 {
                     if (!IsAliveAndActive())
-                        yield break;
+                        {   
+                            yield break;
+                        }
 
                     if (gatherType == null || Supplies.IsAtMax(Owner, gatherType))
                         break;
@@ -207,7 +211,9 @@ namespace RTS.Units
                 while (Time.time < endTime)
                 {
                     if (!IsAliveAndActive())
+                    {
                         yield break;
+                    }
 
                     if (gatherType == null || Supplies.IsAtMax(Owner, gatherType))
                         break;
@@ -407,7 +413,9 @@ namespace RTS.Units
             while (buildingUnderConstruction != null)
             {
                 if (!IsAliveAndActive())
+                {
                     yield break;
+                }
 
                 if (anim != null)
                 {
@@ -451,7 +459,9 @@ namespace RTS.Units
             while (buildingUnderConstruction != null && buildingSO != null)
             {
                 if (!IsAliveAndActive())
+                {
                     yield break;
+                }
 
                 float normalizedTime = (Time.time - buildStartTime) / buildingSO.BuildTime;
 
@@ -495,34 +505,7 @@ namespace RTS.Units
                 return;
             }
 
-            if (gatherRoutine != null)
-            {
-                StopCoroutine(gatherRoutine);
-                gatherRoutine = null;
-            }
-
-            if (healRoutine != null)
-            {
-                StopCoroutine(healRoutine);
-                healRoutine = null;
-            }
-
-            healTarget = null;
-
-            if (currentSupply != null)
-            {
-                currentSupply.AbortGather();
-                currentSupply = null;
-            }
-
-            if (TryGetComponent(out Animator anim))
-            {
-                anim.SetBool(AnimationConstants.IS_GATHERING, false);
-                anim.SetFloat(AnimationConstants.SPEED, 0);
-            }
-
-            isExecutingGatherCommand = false;
-            SetCommandOverrides(null);
+            CleanupAllActions();
         }
 
         public override void Deselect()
@@ -561,6 +544,11 @@ namespace RTS.Units
 
         private void StopCurrentActionCoroutines()
         {
+            CleanupAllActions();
+        }
+
+        private void CleanupAllActions()
+        {
             if (gatherRoutine != null)
             {
                 StopCoroutine(gatherRoutine);
@@ -586,11 +574,17 @@ namespace RTS.Units
             }
 
             healTarget = null;
-            isExecutingHealCommand = false;
+
+            gatherType = null;
             isExecutingGatherCommand = false;
             isExecutingBuildCommand = false;
+            isExecutingHealCommand = false;
 
-            if (CanUseAgent())
+            buildingUnderConstruction = null;
+            buildingSO = null;
+            buildingRenderer = null;
+
+            if (CanUseAgent() && Agent.isOnNavMesh)
             {
                 Agent.isStopped = false;
                 Agent.ResetPath();
@@ -605,6 +599,13 @@ namespace RTS.Units
             SetCommandOverrides(null);
         }
 
+        protected override void OnDestroy()
+        {
+            CleanupAllActions();
+            base.OnDestroy();
+        }
+        
+
         private IEnumerator HealRoutine()
         {
             Animator anim = GetComponent<Animator>();
@@ -614,7 +615,9 @@ namespace RTS.Units
             while (healTarget != null && healTarget.Transform != null)
             {
                 if (!IsAliveAndActive())
+                {
                     yield break;
+                }
 
                 if (healTarget.Owner != Owner)
                     break;
