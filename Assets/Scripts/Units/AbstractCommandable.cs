@@ -62,6 +62,11 @@ namespace RTS.Units
 
         public bool IsVisibleTo(Owner owner) => visibleOwnerSet.Contains(owner);
         public bool WasEverVisibleTo(Owner owner) => everVisibleOwnerSet.Contains(owner);
+        private Transform minimapOriginalParent;
+        private bool minimapDetached;
+        private GameObject lastKnownMarkerObject;
+        private bool wasVisibleToPlayerLastFrame;
+        private FogVisibilityManager playerFogVisibilityManager;
 
         [Header("Vision Layers")]
         [SerializeField] private string playerVisionLayerName = "Fog of War Vision";
@@ -123,6 +128,11 @@ namespace RTS.Units
             everVisibleOwnerSet = new HashSet<Owner>(everVisibleToOwners);
 
             EnsureMinimapMaterialInstance();
+
+            if (MinimapRenderer != null)
+            {
+                minimapOriginalParent = MinimapRenderer.transform.parent;
+            }
         }
 
         protected virtual void Start()
@@ -140,6 +150,9 @@ namespace RTS.Units
             initialCommands = UnitSO.Prefab.GetComponent<AbstractCommandable>().AvailableCommands;
             SetCommandOverrides(null);
 
+            playerFogVisibilityManager = FogVisibilityManager.Get(Owner.Player1);
+            wasVisibleToPlayerLastFrame = IsVisibleTo(Owner.Player1);
+
             RefreshMinimapState();
 
             Bus<UpgradeResearchedEvent>.OnEvent[Owner] += HandleUpgradeResearched;
@@ -148,8 +161,23 @@ namespace RTS.Units
             RefreshHealthUIValues();
             RefreshUnitUIVisibility();
 
-
             ApplyPlayerVisibilityPresentation();
+        }
+        protected virtual void LateUpdate()
+        {
+            if (Owner == Owner.Player1) return;
+            if (lastKnownMarkerObject == null) return;
+
+            if (IsVisibleTo(Owner.Player1))
+            {
+                DestroyLastKnownMarker();
+                return;
+            }
+
+            if (IsLastKnownMarkerLocationVisibleToPlayer())
+            {
+                DestroyLastKnownMarker();
+            }
         }
 
         protected virtual void OnDestroy()
@@ -167,6 +195,8 @@ namespace RTS.Units
                     -UnitSO.PopulationConfig.PopulationSupply
                 ));
             }
+
+            DestroyLastKnownMarker();
         }
 
         private void SyncVisibilityListsForInspector()
@@ -369,6 +399,23 @@ namespace RTS.Units
             }
         }
 
+        private void AttachMinimapToUnit()
+        {
+            if (MinimapRenderer == null || !minimapDetached) return;
+
+            MinimapRenderer.transform.SetParent(minimapOriginalParent, true);
+            minimapDetached = false;
+        }
+
+        private void DetachMinimapAtCurrentPosition()
+        {
+            if (MinimapRenderer == null || minimapDetached) return;
+
+            MinimapRenderer.transform.SetParent(null, true);
+            minimapDetached = true;
+        }
+
+
         protected void RefreshMinimapState()
         {
             if (MinimapRenderer == null) return;
@@ -377,17 +424,90 @@ namespace RTS.Units
             {
                 MinimapRenderer.enabled = true;
                 MinimapRenderer.material.SetColor(COLOR_ID, player1MinimapColor);
+                DestroyLastKnownMarker();
                 return;
             }
 
-            if (!WasEverVisibleTo(Owner.Player1))
+            bool isVisible = IsVisibleTo(Owner.Player1);
+            bool wasEverVisible = WasEverVisibleTo(Owner.Player1);
+
+            if (isVisible)
             {
-                MinimapRenderer.enabled = false;
+                MinimapRenderer.enabled = true;
+                MinimapRenderer.material.SetColor(COLOR_ID, enemyMinimapColor);
+
+                DestroyLastKnownMarker();
+                wasVisibleToPlayerLastFrame = true;
                 return;
             }
 
-            MinimapRenderer.enabled = true;
-            MinimapRenderer.material.SetColor(COLOR_ID, enemyMinimapColor);
+            MinimapRenderer.enabled = false;
+
+            if (wasVisibleToPlayerLastFrame && wasEverVisible)
+            {
+                CreateLastKnownMarker();
+                UpdateLastKnownMarkerPosition();
+            }
+
+            if (!isVisible && wasEverVisible && lastKnownMarkerObject != null && IsLastKnownMarkerLocationVisibleToPlayer())
+            {
+                DestroyLastKnownMarker();
+            }
+
+            wasVisibleToPlayerLastFrame = false;
+        }
+
+        private void CreateLastKnownMarker()
+        {
+            if (MinimapRenderer == null) return;
+            if (lastKnownMarkerObject != null) return;
+
+            lastKnownMarkerObject = Instantiate(
+                MinimapRenderer.gameObject,
+                MinimapRenderer.transform.position,
+                MinimapRenderer.transform.rotation
+            );
+
+            lastKnownMarkerObject.transform.localScale = MinimapRenderer.transform.lossyScale;
+
+            Renderer markerRenderer = lastKnownMarkerObject.GetComponent<Renderer>();
+            if (markerRenderer != null)
+            {
+                if (markerRenderer.sharedMaterial != null)
+                {
+                    markerRenderer.material = new Material(markerRenderer.sharedMaterial);
+                }
+
+                markerRenderer.material.SetColor(COLOR_ID, enemyMinimapColor);
+                markerRenderer.enabled = true;
+            }
+        }
+        private void DestroyLastKnownMarker()
+        {
+            if (lastKnownMarkerObject == null) return;
+
+            Destroy(lastKnownMarkerObject);
+            lastKnownMarkerObject = null;
+        }
+        private void UpdateLastKnownMarkerPosition()
+        {
+            if (lastKnownMarkerObject == null || MinimapRenderer == null) return;
+
+            lastKnownMarkerObject.transform.position = MinimapRenderer.transform.position;
+            lastKnownMarkerObject.transform.rotation = MinimapRenderer.transform.rotation;
+        }
+        private bool IsLastKnownMarkerLocationVisibleToPlayer()
+        {
+            if (lastKnownMarkerObject == null) return false;
+
+            if (playerFogVisibilityManager == null)
+            {
+                playerFogVisibilityManager = FogVisibilityManager.Get(Owner.Player1);
+            }
+
+            if (playerFogVisibilityManager == null) return false;
+
+            return playerFogVisibilityManager.IsVisible(lastKnownMarkerObject.transform.position);
         }
 
         protected void RefreshVision()

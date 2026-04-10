@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 522a4ddaa9d2c2b4fb5b6772c16dea77, type: 3}
   m_Name: Build futur
   m_EditorClassIdentifier: Assembly-CSharp::BuildUnitCommand
-  <Name>k__BackingField: Futur
+  <Name>k__BackingField: Ranged
   <Hotkey>k__BackingField: 20
   <Icon>k__BackingField: {fileID: 21300000, guid: 09a4f84c9d34f214081076db852db57a, type: 3}
   <Slot>k__BackingField: 3

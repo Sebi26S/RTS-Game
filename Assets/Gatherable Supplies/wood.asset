@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RTS.Environment.SupplySO
   <Type>k__BackingField: 1
   <MaxAmount>k__BackingField: 1000
-  <AmountPerGather>k__BackingField: 50
+  <AmountPerGather>k__BackingField: 100
   <BaseGatherTime>k__BackingField: 2
   <MaxStoredAmount>k__BackingField: 2000

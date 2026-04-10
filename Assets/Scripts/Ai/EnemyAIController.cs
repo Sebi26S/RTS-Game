@@ -78,6 +78,10 @@ namespace RTS.AI
         [SerializeField] private float scoutNavMeshSampleDistance = 8f;
         [SerializeField] private float minDistanceFromLastScoutTarget = 12f;
         [SerializeField] private float enemyDetectionRadius = 12f;
+        [SerializeField] private float scoutExplorationCellSize = 12f;
+        [SerializeField] private float scoutVisitedPointRadius = 10f;
+        [SerializeField] private int scoutExplorationMemoryPaddingCells = 1;
+        
 
         [Header("Attack / Retreat")]
         [SerializeField] private bool enableAttacking = true;
@@ -149,6 +153,7 @@ namespace RTS.AI
         private BaseBuilding knownEnemyTargetBuilding;
         private readonly Queue<Vector3> recentScoutTargets = new();
         private const int MAX_RECENT_SCOUT_TARGETS = 6;
+        private readonly HashSet<Vector2Int> exploredScoutCells = new();
 
         private readonly List<AbstractUnit> allUnits = new();
         private readonly List<Worker> workers = new();
@@ -244,6 +249,7 @@ namespace RTS.AI
 
         private void Start()
         {
+            exploredScoutCells.Clear();
             StartCoroutine(AIRefreshLoop());
         }
 
@@ -1420,8 +1426,15 @@ namespace RTS.AI
             if (activeScoutExplorer == null)
                 return;
 
+            MarkScoutAreaAsExplored(activeScoutExplorer.transform.position);
+
             if (!hasScoutTarget || HasScoutReachedTarget(activeScoutExplorer, currentScoutTarget))
             {
+                if (hasScoutTarget)
+                {
+                    MarkScoutAreaAsExplored(currentScoutTarget);
+                }
+
                 if (TryGetRandomScoutPoint(out Vector3 nextTarget))
                 {
                     currentScoutTarget = nextTarget;
@@ -1434,6 +1447,35 @@ namespace RTS.AI
             }
 
             activeScoutExplorer.MoveTo(currentScoutTarget);
+        }
+
+        private Vector2Int GetScoutCell(Vector3 worldPosition)
+        {
+            int x = Mathf.FloorToInt(worldPosition.x / scoutExplorationCellSize);
+            int z = Mathf.FloorToInt(worldPosition.z / scoutExplorationCellSize);
+            return new Vector2Int(x, z);
+        }
+
+        private bool IsScoutPointExplored(Vector3 worldPosition)
+        {
+            return exploredScoutCells.Contains(GetScoutCell(worldPosition));
+        }
+
+        private void MarkScoutAreaAsExplored(Vector3 worldPosition)
+        {
+            Vector2Int centerCell = GetScoutCell(worldPosition);
+
+            int radiusInCells = Mathf.CeilToInt(scoutVisitedPointRadius / scoutExplorationCellSize);
+            radiusInCells += scoutExplorationMemoryPaddingCells;
+
+            for (int x = -radiusInCells; x <= radiusInCells; x++)
+            {
+                for (int z = -radiusInCells; z <= radiusInCells; z++)
+                {
+                    Vector2Int cell = new Vector2Int(centerCell.x + x, centerCell.y + z);
+                    exploredScoutCells.Add(cell);
+                }
+            }
         }
 
         private void CleanupScoutState()
@@ -1544,6 +1586,9 @@ namespace RTS.AI
             if (minX >= maxX || minZ >= maxZ)
                 return false;
 
+            Vector3 fallbackPoint = Vector3.zero;
+            bool hasFallback = false;
+
             for (int i = 0; i < scoutRandomPointAttempts; i++)
             {
                 Vector3 rawPoint = new Vector3(
@@ -1560,7 +1605,22 @@ namespace RTS.AI
                 if (!IsFarEnoughFromRecentScoutTargets(candidate))
                     continue;
 
+                if (!hasFallback)
+                {
+                    fallbackPoint = candidate;
+                    hasFallback = true;
+                }
+
+                if (IsScoutPointExplored(candidate))
+                    continue;
+
                 point = candidate;
+                return true;
+            }
+
+            if (hasFallback)
+            {
+                point = fallbackPoint;
                 return true;
             }
 
@@ -2224,6 +2284,7 @@ namespace RTS.AI
             sb.AppendLine($"Wave Desired Ranged: {CurrentWaveDesiredRangedCount}");
             sb.AppendLine($"Wave Desired Scout: {CurrentWaveDesiredScoutCount}");
             sb.AppendLine($"Wave Retreat Cooldown: {CurrentWaveAttackCooldownAfterRetreat:0.0}s");
+            //Debug.Log("NavMesh vertices: " + UnityEngine.AI.NavMesh.CalculateTriangulation().vertices.Length);
 
             return sb.ToString();
         }
